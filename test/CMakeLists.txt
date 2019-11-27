@@ -3,7 +3,8 @@ function(create_test name ...)
 
     set(name "gelfcpp_test_${name}")
     add_executable(${name} ${ARGV})
-    target_link_libraries(${name} PUBLIC gelfcpp gelfcpp_googletest_main)
+    #target_link_libraries(${name} PUBLIC gelfcpp gelfcpp_googletest_main)
+    target_link_libraries(${name} PUBLIC gelfcpp)
     add_test(${name} ${name})
 endfunction()
 
@@ -12,7 +13,8 @@ function(create_all)
 
     file(GLOB_RECURSE sources ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
     add_executable(gelfcpp_test_all ${sources})
-    target_link_libraries(gelfcpp_test_all PUBLIC gelfcpp gelfcpp_googletest_main)
+#    target_link_libraries(gelfcpp_test_all PUBLIC gelfcpp gelfcpp_googletest_main)
+    target_link_libraries(gelfcpp_test_all PUBLIC gelfcpp)
 endfunction()
 
 create_all()

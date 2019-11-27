@@ -64,6 +64,7 @@ private:
     template<std::size_t... I>
     void operator()(GelfMessage& message, std::index_sequence<I...>)
     {
+//        if (0 == I) return;  // fix for MSVC when size=0
         int dummy[] = { (std::get<I>(decorators_)(message), 0)... };
         (void) dummy;
     }

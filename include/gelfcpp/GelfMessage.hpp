@@ -45,6 +45,10 @@ public:
         SetField("version", "1.1");
     }
 
+    GelfMessage(const GelfMessage& other) {
+        doc_.CopyFrom(other.doc_, doc_.GetAllocator());
+    }
+
     /**
      * \brief Quick accessor for <code>short_message</code> field.
      *
@@ -115,7 +119,7 @@ public:
 
     void SetField(const std::string& name, const std::string& value)
     {
-        rapidjson::Value json(value, doc_.GetAllocator());
+        rapidjson::Value json(value.c_str(), doc_.GetAllocator());
         SetField(name, std::move(json));
     }
 
@@ -164,9 +168,9 @@ private:
 
         auto find = doc_.FindMember(key);
         if (find != doc_.MemberEnd())
-            find->value = std::move(value);
+            find->value = value;
         else
-            doc_.AddMember(std::move(key), std::move(value), doc_.GetAllocator());
+            doc_.AddMember(std::move(key), value, doc_.GetAllocator());
     }
 
 private:
