@@ -8,18 +8,11 @@ class ppConsul(ConanFile):
     url = "https://github.com/pss146/gelfcpp"
     description = "Library for sending Graylog Extended Log Format (GELF) messages from C++ applications"
     topics = ("gelfcpp", "gelf")
-    settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False]}
-    default_options = "shared=False"
+    settings = "os", "compiler", "arch", "build_type"
     generators = "cmake"
-    #exports_sources = ["../CMakeLists.txt", "../ext/*", "../include/*", "../src/*"]
-    #exports_sources = ["*", "!.*"]
-    exports_sources = ["*"]
-
-    def configure(self):
-        # We can control the options of our dependencies based on current options
-        # self.options["libcurl"].shared = self.options.shared
-        self.options["libcurl"].shared = True
+    exports = ("LICENSE")
+    exports_sources = ("include/*", "CMakeLists.txt", "README.md", "doc/*", "example/*", "test/*")
+    no_copy_source = True
 
     def requirements(self):
         self.requires.add("boost/1.70.0@conan/stable")
@@ -28,20 +21,19 @@ class ppConsul(ConanFile):
 
     def _configure_cmake(self):
         cmake = CMake(self)
-        cmake.definitions['BUILD_TESTS'] = 'OFF'
-        cmake.definitions['BUILD_SHARED_LIBS'] = 'ON' if self.options.shared else 'OFF'
         cmake.configure()
         return cmake
 
-    def build(self):
+    def build(self): # this is not building a library, just tests
         cmake = self._configure_cmake()
         cmake.build()
+        if tools.get_env("CONAN_RUN_TESTS", True):
+            cmake.test()
 
     def package(self):
-        cmake = self._configure_cmake()
-        cmake.install()
+        self.copy("*", dst="include", src="include")
+        self.copy(pattern="LICENSE.txt", dst="licenses")
 
-    def package_info(self):
-        #self.cpp_info.libs = tools.collect_libs(self)
-        self.cpp_info.libs = ['ppconsul', 'json11']
+    def package_id(self):
+        self.info.header_only()
 

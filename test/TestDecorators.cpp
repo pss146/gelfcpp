@@ -79,14 +79,14 @@ TEST(TestDecorators, CurrentTimestamp)
 
 TEST(TestDecorators, StaticDectoratorSet)
 {
-//    {
-//        decorator::StaticDecoratorSet<> set;
-//        {
-//            GelfMessage msg;
-//            set(msg);
-//            EXPECT_EQ(Serialize(msg), R"({"version":"1.1"})");
-//        }
-//    }
+    {
+        decorator::StaticDecoratorSet<> set;
+        {
+            GelfMessage msg;
+            set(msg);
+            EXPECT_EQ(Serialize(msg), R"({"version":"1.1"})");
+        }
+    }
     {
         decorator::StaticDecoratorSet<decorator::Host> set;
         set.get<0>().SetHost("test-pc");
