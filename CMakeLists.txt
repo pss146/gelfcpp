@@ -1,46 +1,39 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.14)
 project(gelfcpp)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Subproject options
-#set(GELFCPP_AS_SUBPROJECT       OFF                  CACHE BOOL   "Use gelfcpp as a subproject")
-set(GELFCPP_BOOST_LIBRARY       "gelfcpp_boost"      CACHE STRING "Boost library used for gelfcpp")
-set(GELFCPP_RAPIDJSON_LIBRARY   "gelfcpp_rapidjson"  CACHE STRING "rapidjson library used for gelfcpp")
-set(GELFCPP_GOOGLETEST_LIBRARY  "gelfcpp_googletest" CACHE STRING "googletest library used for gelfcpp")
+# Initialize Conan #############################################################
+if (NOT EXISTS conanbuildinfo.cmake)
+    message(FATAL_ERROR "Run Conan first: conan install <path_to_your_conanfile.txt>")
+endif ()
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
 
-# Build options
-if (NOT GELFCPP_AS_SUBPROJECT)
-    option(GELFCPP_BUILD_EXAMPLES       "Build gelfcpp examples"      OFF)
-    option(GELFCPP_BUILD_TESTS          "Build gelfcpp tests"          ON)
-    option(GELFCPP_BUILD_DOCUMENTATION  "Build doxygen documentation"  ON)
-    option(GELFCPP_WITH_COMPRESSION     "Enable compression support"   ON)
-else()
-    message(STATUS "gelfcpp: building as subproject")
-    set(GELFCPP_BUILD_EXAMPLES      OFF)
-    set(GELFCPP_BUILD_TESTS         OFF)
-    set(GELFCPP_BUILD_DOCUMENTATION OFF)
-    if (NOT (DEFINED GELFCPP_WITH_COMPRESSION))
-        set(GELFCPP_WITH_COMPRESSION ON)
-    endif()
-endif()
+# Build options ################################################################
+option(GELFCPP_BUILD_EXAMPLES       "Build gelfcpp examples"      OFF)
+option(GELFCPP_BUILD_TESTS          "Build gelfcpp tests"          ON)
+option(GELFCPP_BUILD_DOCUMENTATION  "Build doxygen documentation"  ON)
+option(GELFCPP_WITH_COMPRESSION     "Enable compression support"   ON)
 
-# Load dependencies
-add_subdirectory(dep)
+# Preprocessor definitions ######################################################
+IF(MSVC)
+    add_definitions(-D_WIN32_WINNT=0x0601)
 
-# Register library
+    # suppress specific compiler warnings
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(-D_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING)
+    add_definitions(-D_SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING)
+ENDIF()
+
+# Create library ###############################################################
 add_library(gelfcpp INTERFACE)
 target_include_directories(gelfcpp INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(gelfcpp INTERFACE ${GELFCPP_BOOST_LIBRARY} ${GELFCPP_RAPIDJSON_LIBRARY})
-if (NOT GELFCPP_WITH_COMPRESSION)
-    message(STATUS "gelfcpp: disabled compression support")
-    target_compile_definitions(gelfcpp INTERFACE -DGELFCPP_NO_COMPRESSION)
-endif()
-if (NOT GELFCPP_AS_SUBPROJECT)
-    target_compile_options(gelfcpp INTERFACE -Wall -Wextra -Wno-double-promotion)
-endif()
+target_link_libraries(gelfcpp INTERFACE ${CONAN_LIBS})
 
-# Additional build options
+# Additional build options #####################################################
 if (GELFCPP_BUILD_DOCUMENTATION)
     add_subdirectory(doc)
 endif()
