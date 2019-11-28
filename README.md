@@ -1,3 +1,7 @@
+## Package Status
+
+[![Build Status](https://dev.azure.com/sperepelitsyn/conan-recipes/_apis/build/status/pss146.gelfcpp?branchName=stable%2F0.1)](https://dev.azure.com/sperepelitsyn/conan-recipes/_build/latest?definitionId=6&branchName=stable%2F0.1)
+
 # gelfcpp
 ## Library for sending [Graylog Extended Log Format (GELF)](http://docs.graylog.org/en/stable/pages/gelf.html) messages from C++ applications.
 
