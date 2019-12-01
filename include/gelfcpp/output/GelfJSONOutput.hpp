@@ -5,6 +5,9 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
+#include <string>
+#include <sstream>
+#include <iostream>
 
 namespace gelfcpp
 {
