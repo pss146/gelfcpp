@@ -15,9 +15,9 @@ class ppConsul(ConanFile):
     no_copy_source = True
 
     def requirements(self):
-        self.requires.add("boost/1.70.0@conan/stable")
-        self.requires.add("gtest/1.8.1@bincrafters/stable")
-        self.requires.add("rapidjson/1.1.0@bincrafters/stable")
+        self.requires.add("boost/1.70.0")
+        self.requires.add("gtest/1.8.1")
+        self.requires.add("rapidjson/1.1.0")
 
     def _configure_cmake(self):
         cmake = CMake(self)
